@@ -1,25 +1,19 @@
 {
-  "name": "rsf_updater",
+  "name": "rsf_updater2",
+  "productName": "rsf_updater2",
   "version": "1.0.0",
-  "description": "Electron-based updater for RSF",
-  "main": "main.js",
+  "description": "My Electron application description",
+  "main": ".webpack/main",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/csandwith/rsf_updater.git"
-  },
-  "author": "Cody Sandwith <codysandwith@gmail.com>",
-  "license": "Apache 2.0",
-  "bugs": {
-    "url": "https://github.com/csandwith/rsf_updater/issues"
-  },
-  "homepage": "https://github.com/csandwith/rsf_updater#readme",
   "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
     "@electron-forge/cli": "^7.6.0",
     "@electron-forge/maker-deb": "^7.6.0",
     "@electron-forge/maker-rpm": "^7.6.0",
@@ -27,10 +21,26 @@
     "@electron-forge/maker-zip": "^7.6.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.6.0",
     "@electron-forge/plugin-fuses": "^7.6.0",
+    "@electron-forge/plugin-webpack": "^7.6.0",
     "@electron/fuses": "^1.8.0",
-    "electron": "^33.2.1"
+    "@vercel/webpack-asset-relocator-loader": "1.7.3",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^6.0.0",
+    "electron": "33.2.1",
+    "node-loader": "^2.0.0",
+    "style-loader": "^3.0.0"
   },
+  "keywords": [],
+  "author": {
+    "name": "Cody Sandwith",
+    "email": "csandwith@topiatechnology.com"
+  },
+  "license": "MIT",
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "@reduxjs/toolkit": "^2.5.0",
+    "electron-squirrel-startup": "^1.0.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0"
   }
 }

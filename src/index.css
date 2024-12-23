@@ -1,0 +1,33 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: 0;
+  max-width: 38rem;
+  padding: 0;
+  align-items: stretch;
+  background: #2A2B34;
+  color: #EEEEEE;
+}
+
+.app {
+  display: flex;
+  position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px;
+}
+
+.nav {
+  background: #3D3D4C;
+  flex: 1;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 4;
+  padding-left: 1em;
+  padding-right: 1em;
+}
