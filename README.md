@@ -15,7 +15,6 @@ RSF, as I understand it, is currently distributed in one of two ways:
     - Most users presumably do not care about the minutea of how they get an update
 
 The goals of this project are as follows
- - To provide the RSF Launcher with information about whether or not an update is available (so that it can, presumably, prompt the user)
  - To provide the user a semi-automatic method of updating RSF with as little hassle as possible
  - To utilize the Torrent protocol in order to achieve this
 
@@ -31,39 +30,56 @@ It should be noted that a further goal was proposed - that a complete rewrite of
 ## Design
 
 ### UI
-1. The RSF Updater App will be comprised of a navigation pane on the left, and a content pane on the right
-    a. Clicking on navigation options will switch which content pane is displayed
-2. The Updater content pane will be responsible for displaying information about an available update, as well as the state of the current version.
-    a. Display the current version of RSF that is installed
-    b. Display the latest version of RSF that is available
-        i. If these versions are identical, inform the user that their client is up-to-date
-    c. Display the current status of the Download
-        i. Allow the user to start the Download if it hasn't started
-        ii. Allow the user to pause the Download if it is running
-        iii. Allow the user to cancel the Download if it is running/paused
+<ol>
+<li>The RSF Updater App will be comprised of a navigation pane on the left, and a content pane on the right</li>
+    <ol>
+    <li>Clicking on navigation options will switch which content pane is displayed</li>
+    </ol>
+<li>The Updater content pane will be responsible for displaying information about an available update, as well as the state of the current version.</li>
+<ol>
+    <li>Display the current version of RSF that is installed</li>
+    <li>Display the latest version of RSF that is available</li>
+<ol>
+        <li>If these versions are identical, inform the user that their client is up-to-date</li></ol>
+    <li>Display the current status of the Download</li>
+<ol>
+        <li>Allow the user to start the Download if it hasn't started</li>
+        <li>Allow the user to pause the Download if it is running</li>
+        <li>Allow the user to cancel the Download if it is running/paused</li></ol></ol>
 
 ### State
-1. Application state will be managed via React Redux
-2. State persistence is still TBD - though it sounds like React Redux has capability for persisting things
-    a. TODO: Figure out how to persist state to files on disk, through/via Electron, and to load the state on startup
-    b. All persistance-worthy state will be persisted to files on disk
+<ol>
+<li>Application state will be managed via React Redux</li>
+<li>State persistence is still TBD - though it sounds like React Redux has capability for persisting things</li>
+    <ol>
+    <li>TODO: Figure out how to persist state to files on disk, through/via Electron, and to load the state on startup</li>
+    <li>All persistance-worthy state will be persisted to files on disk</li></ol></ol>
 
 ### Model
 The model will consist of the following objects
-1. CurrentRSF
+<ol>
+<li>CurrentRSF</li>
+
  - version (the current version of RSF, as discovered by interrogating the disk)
  - ???
 
-2. Update
+<li>Update</li>
+
  - version (the version of the update)
+
  - metaURL (the URL to some server where this Update's meta-information came from)
  - ??? (I'm assuming things like the list of Torrents that make up this update, both remote and local)
 
-3. Download
+<li>Download</li>
+
  - location (path to the download on disk)
+
  - progress
+
  - state (e.g. "paused", "downloading", "cancelled", "ready to install")
+ 
  - ???
+</ol>
 
 ### Remote
 The remote handler will contain all of the behavior for contacting whatever remote servers/resources to fetch information.
