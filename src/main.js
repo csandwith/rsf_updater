@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, Notification } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+import fs from 'fs'
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -39,6 +40,32 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+});
+
+ipcMain.on("notify", (_, text) => {
+  new Notification({ title: "Notification", body: text }).show();
+});
+
+ipcMain.on("notifyb", (_, message) => {
+  new Notification({ title: "Notification", body: message }).show();
+});
+
+ipcMain.on("savetext", (_, text, fileName) => {
+  let targetPath = __dirname;
+  if(path.basename(targetPath) == 'main') { //This block of code should only matter during development.
+    targetPath = path.dirname(targetPath);
+    if(path.basename(targetPath) == ".webpack") {
+      targetPath = path.dirname(targetPath);
+    }
+  }
+  new Notification({ title: "Notification", body: targetPath + " " + fileName }).show();
+  fs.writeFile(path.join(targetPath, fileName).toString(), 
+    text, 
+    function (err) {
+      if(err) {
+        new Notification({ title: "Error", body : "Failed to write file: " + err}).show();
+      }
+    });
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
