@@ -16,7 +16,6 @@ function getCurrentContent() {
 }
 
 export default function Content() { 
-    const currentPage = useSelector((state) => state.nav.value);
     return ( 
       <div className="content">
         {getCurrentContent()}
