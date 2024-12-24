@@ -3,3 +3,4 @@ out/
 package-lock.json
 forge.config.js
 .webpack/
+settings.json

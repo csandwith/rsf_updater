@@ -15,6 +15,9 @@ contextBridge.exposeInMainWorld("electron", {
   fileApi: {
     writeTextToFile(text, fileName) {
       ipcRenderer.send("savetext", text, fileName);
+    },
+    readTextFromFile(fileName) {
+      return ipcRenderer.invoke("readText", fileName);
     }
   },
 });

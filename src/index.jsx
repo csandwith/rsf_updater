@@ -4,6 +4,9 @@ import Nav from './views/nav.jsx';
 import Content from './views/content.jsx';
 import store from './redux/store.js'
 import { Provider } from 'react-redux'
+import {loadFromFile} from './redux/settingsSlice.js'
+
+loadFromFile();
 
 export default function App() {  
     return (
