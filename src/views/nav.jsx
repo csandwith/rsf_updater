@@ -1,11 +1,12 @@
 import React from 'react';
-//import { ipcRenderer } from 'electron';
 import { useSelector, useDispatch } from 'react-redux'
 import { navigateTo } from '../redux/navSlice';
+import { useTranslation } from 'react-i18next';
 
 export default function Nav() {
     const currentPage = useSelector((state) => state.nav.value);
     const dispatch = useDispatch();
+    const { t } = useTranslation(); 
 
     const handleClick = (event) => {
         const target = event.currentTarget.getAttribute("target");
@@ -19,10 +20,9 @@ export default function Nav() {
 
     return (
         <div className="nav">
-            <h1>Nav: {currentPage}</h1>
             <div className="navList">
-                <button id="updaterNav" target="updater" onClick={handleClick}>Updater</button>
-                <button id="settingsNav" target="settings" onClick={handleClick}>Settings</button>
+                <button id="updaterNav" target="updater" onClick={handleClick}>{t('nav.buttons.updater.text')}</button>
+                <button id="settingsNav" target="settings" onClick={handleClick}>{t('nav.buttons.settings.text')}</button>
                 <button id="tempNav3" target="ignore" onClick={testFileWrite}>Test file Write</button>
             </div>
         </div>

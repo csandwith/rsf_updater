@@ -5,7 +5,7 @@ import Content from './views/content.jsx';
 import store from './redux/store.js'
 import { Provider } from 'react-redux'
 
-export default function App() { 
+export default function App() {  
     return (
         <div className="app">
             <Nav />

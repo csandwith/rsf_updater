@@ -39,8 +39,10 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
     "electron-squirrel-startup": "^1.0.1",
+    "i18next": "^24.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-i18next": "^15.2.0",
     "react-redux": "^9.2.0"
   }
 }
