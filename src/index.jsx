@@ -1,12 +1,19 @@
-import React, { StrictMode, useState, createContext } from 'react';
+import React, { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import Nav from './views/nav.jsx';
 import Content from './views/content.jsx';
 import store from './redux/store.js'
-import { Provider } from 'react-redux'
-import {loadFromFile} from './redux/settingsSlice.js'
+import { Provider, useDispatch } from 'react-redux'
+import { loadFromDisk } from './redux/settingsSlice.js'
 
-loadFromFile();
+function SettingsLoader({ children }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadFromDisk());
+  }, [dispatch]);
+  return <>{ children }</>
+}
 
 export default function App() {  
     return (
@@ -21,7 +28,9 @@ const root = createRoot(document.body);
 root.render(
     <StrictMode>
         <Provider store={store}>
-            <App />
+            <SettingsLoader>
+                <App />
+            </SettingsLoader>
         </Provider>
     </StrictMode>
 );
