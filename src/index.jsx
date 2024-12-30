@@ -4,13 +4,16 @@ import Nav from './views/nav.jsx';
 import Content from './views/content.jsx';
 import store from './redux/store.js'
 import { Provider, useDispatch } from 'react-redux'
-import { loadFromDisk } from './redux/settingsSlice.js'
+import { loadSettings } from './redux/settingsSlice.js'
+import { loadRSFData } from './redux/RSFSlice.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-function SettingsLoader({ children }) {
+function DataLoader({ children }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(loadFromDisk());
+    dispatch(loadSettings());
+    dispatch(loadRSFData());
   }, [dispatch]);
   return <>{ children }</>
 }
@@ -28,9 +31,9 @@ const root = createRoot(document.body);
 root.render(
     <StrictMode>
         <Provider store={store}>
-            <SettingsLoader>
+            <DataLoader>
                 <App />
-            </SettingsLoader>
+            </DataLoader>
         </Provider>
     </StrictMode>
 );

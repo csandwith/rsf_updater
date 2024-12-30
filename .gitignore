@@ -4,3 +4,6 @@ package-lock.json
 forge.config.js
 .webpack/
 settings.json
+fake_rsf.json
+Download/
+Install/

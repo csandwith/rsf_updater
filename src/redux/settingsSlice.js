@@ -4,8 +4,8 @@ const settings = {};
 const settingsFile = "settings.json";
 
 // Define an async thunk to fetch initial data
-export const loadFromDisk = createAsyncThunk('settings/loadFromDisk', async () => {
-  console.log("Loading from disk");
+export const loadSettings = createAsyncThunk('settings/loadFromDisk', async () => {
+  console.log("Loading Settings from disk");
   const response = await electron.fileApi.readTextFromFile(settingsFile);
   console.log(response);
   const settingsFromDisk = JSON.parse(response);
@@ -37,14 +37,14 @@ const settingsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loadFromDisk.pending, (state) => {
+      .addCase(loadSettings.pending, (state) => {
         state.loading = true;
       })
-      .addCase(loadFromDisk.fulfilled, (state, action) => {
+      .addCase(loadSettings.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
       })
-      .addCase(loadFromDisk.rejected, (state, action) => {
+      .addCase(loadSettings.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

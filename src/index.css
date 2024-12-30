@@ -5,8 +5,8 @@ body {
   max-width: 38rem;
   padding: 0;
   align-items: stretch;
-  background: #2A2B34;
-  color: #EEEEEE;
+
+
 }
 
 .app {
@@ -15,10 +15,11 @@ body {
 }
 
 .nav {
-  background: #3D3D4C;
   flex: 1;
   padding-left: 1em;
   padding-right: 1em;
+  background: #3D3D4C;
+  color: #EEEEEE;
 }
 
 .navList {
@@ -30,4 +31,19 @@ body {
   flex: 4;
   padding-left: 1em;
   padding-right: 1em;
+  background: #2A2B34;
+  color: #EEEEEE;
+}
+
+.torrentStatusDiv {
+  display: flex;
+  flex-direction: column;
+}
+
+.torrentStatusHeader {
+  flex: 1;
+}
+
+.torrentStatusProgress {
+  flex: 1;
 }

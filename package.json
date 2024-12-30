@@ -38,11 +38,15 @@
   "license": "MIT",
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
+    "bootstrap": "^5.3.3",
     "electron-squirrel-startup": "^1.0.1",
+    "fs-extra": "^11.2.0",
     "i18next": "^24.2.0",
     "react": "^19.0.0",
+    "react-bootstrap": "^2.10.7",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.2.0",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "webtorrent": "^2.5.10"
   }
 }

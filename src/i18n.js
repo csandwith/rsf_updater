@@ -19,6 +19,12 @@ i18n
             }
          },
          updater: {
+            currentVersionLabel: {
+              text: "Current Version: "
+            },
+            latestVersionLabel: {
+              text: "Latest Version: "
+            }
          },
          settings: {
          },
@@ -38,6 +44,12 @@ i18n
             }
          },
          updater: {
+            currentVersionLabel: {
+              text: "Version actuelle: "
+            },
+            latestVersionLabel: {
+              text: "Dernière version: "
+            }
          },
          settings: {
          },  
