@@ -27,8 +27,8 @@ contextBridge.exposeInMainWorld("electron", {
     emptyDir(dirName) {
       return ipcRenderer.invoke("emptyDir", dirName);
     },
-    moveDirContentsTo(src, destName) {
-      return ipcRenderer.invoke("moveDirContentsTo", src, destName);
+    copyDirContentsTo(src, destName) {
+      return ipcRenderer.invoke("copyDirContentsTo", src, destName);
     }
   },
   torrentApi: {

@@ -91,7 +91,10 @@ function DownloadElement(props) {
   const updateData = props.updateData;
   const [dlState, setDlState] = useState({
     state: "loading",
-    error: null
+    error: null,
+    done: false,
+    downloadingTorrents: {},
+    completeTorrents: {}
   });
 
   const webtorrentTorrentOpts = { //Stubbing this in - this should come from Settings
@@ -105,16 +108,23 @@ function DownloadElement(props) {
       for(var i = 0; i < props.updateData.torrents.length; i++) {
         electron.torrentApi.startDownload(props.updateData.torrents[i], webtorrentTorrentOpts);
       }
-      setDlState({state: "downloading"});
+      setDlState({state: "downloading", done: false, downloadingTorrents: {}, completeTorrents: {}});
   };
   const stopDownload = (event) => {
     electron.torrentApi.stopDownload();
-    setDlState({state: "paused"});
+    setDlState({state: "paused", done: false, downloadingTorrents: {}, completeTorrents: {}});
   };
   const cancelDownload = (event) => {
     electron.torrentApi.cancelDownload();
     electron.fileApi.emptyDir("/Download"); //This is async, but we're not too bothered about the result, or waiting for it to finish I don't think.
-    setDlState({state: "cancelled"});
+    setDlState({state: "cancelled", done: false, downloadingTorrents: {}, completeTorrents: {}});
+  };
+  const install = async (event) => {
+    await electron.torrentApi.stopDownload();
+    await electron.fileApi.copyDirContentsTo("/Download", "/Install");
+    await electron.fileApi.rm("/Install/rsf_update.dat");
+    await electron.fileApi.emptyDir("/Download");
+    setDlState({state: "installed", done: true});
   };
   
   const prepareDownload = async() => {
@@ -123,25 +133,25 @@ function DownloadElement(props) {
     try {
       //Check to see if an existing update is aleady in progress
       const response = await electron.fileApi.readTextFromFile("/Download/rsf_update.dat");
-      if(response == "DEADBEEF"/*updateData.version*/) {
+      if(response == updateData.version) {
         //A download has already started for this version - we should resume it (automatically?)
         console.log("Existing version " + response + " matches update - Should resume");
-        setDlState({state: "prepared"});
+        setDlState({state: "prepared", done: false, downloadingTorrents: {}, completeTorrents: {}});
       } else {
         //A different version has already started downloading - we should nuke it in favor of this new version
         console.log("Previous update version " + response + " detected - deleting it");
         await electron.fileApi.emptyDir("/Download");
-        setDlState({state: "prepared"});
+        setDlState({state: "prepared", done: false, downloadingTorrents: {}, completeTorrents: {}});
       }
     } catch (err) {
       if(err.message.includes("ENOENT")) {
         //Update file doesn't exist, that means there isn't an Update already in progress.
         console.log("Update " + updateData.version + " hasn't started yet");
-        setDlState({state: "prepared"});
+        setDlState({state: "prepared", done: false, downloadingTorrents: {}, completeTorrents: {}});
       } else {
         //Handle the error. Not sure how at the moment
         console.log(err);
-        setDlState({state: "error", error: err});
+        setDlState({state: "error", error: err, done: false, downloadingTorrents: {}, completeTorrents: {}});
       }
     }
   }
@@ -150,67 +160,48 @@ function DownloadElement(props) {
     //TODO: This damn thing renders so fast, this ends up hitting prepareDownload twice, which is insane to me
     //I honestly don't know how to solve that.
     if(dlState.state == "loading") {
-      setDlState({state: "preparing"});
+      setDlState({state: "preparing", done: false, downloadingTorrents: {}, completeTorrents: {}});
       //Boy I sure wish I could "await" this function...
       prepareDownload();
+    } else if(dlState.state == "downloading" || dlState.state == "paused") {
+      electron.torrentApi.downloadStatus().then((status) => {
+        status.done = false;
+        status.state = dlState.state;
+        if(Object.keys(status.downloadingTorrents).length == 0 && Object.keys(status.completeTorrents).length > 0) {
+          status.state = "complete";
+          status.done = true;
+        }
+        setDlState(status)
+      });
     }
   })
 
   return (
     <div id="downloadDiv">
       <label>Update {updateData.version} available! translate me!</label><br />
-      {dlState.state == "prepared" && <button id="startDownload" onClick={startDownload}>Download(t)</button>}
-      {dlState.state == "downloading" && <button id="pauseDownload" onClick={stopDownload}>Pause(t)</button>}
-      {dlState.state == "paused" && <button id="resumeDownload" onClick={startDownload}>Resume(t)</button>}
-      {dlState.state == "paused" && <button id="cancelDownload" onClick={cancelDownload}>Cancel(t)</button>}
-      <DownloadStatus />
+      {!dlState.done && dlState.state == "prepared" && <button id="startDownload" onClick={startDownload}>Download(t)</button>}
+      {!dlState.done && dlState.state == "downloading" && <button id="pauseDownload" onClick={stopDownload}>Pause(t)</button>}
+      {!dlState.done && dlState.state == "paused" && <button id="resumeDownload" onClick={startDownload}>Resume(t)</button>}
+      {dlState.done || dlState.state == "paused" && <button id="cancelDownload" onClick={cancelDownload}>Cancel(t)</button>}
+      {dlState.done && dlState.state != "installed" && <button id="install" onClick={install}>Install(t)</button>}
+      <label>DEBUG: {dlState.state}</label>
+      {dlState.done && dlState.state == "installed" && <label id="installationComplete">Installation Complete!(t)</label>}
+      {!dlState.done && <DownloadStatus downloadingTorrents={dlState.downloadingTorrents} completeTorrents={dlState.completeTorrents}/>}
     </div>
   )
 }
 
-function DownloadStatus() {
-  const [status, setStatus] = useState({
-    state: "Ready(t)",
-    done: false,
-    downloadingTorrents: {},
-    completeTorrents: {}
-  });
-
-  const install = async (event) => {
-    await electron.torrentApi.stopDownload();
-    await electron.fileApi.moveDirContentsTo("/Download", "/Install");
-    await electron.fileApi.rm("/Install/rsf_update.dat");
-    await electron.fileApi.emptyDir("/Download");
-  };
-
-  useEffect(() => {
-    electron.torrentApi.downloadStatus().then((status) => {
-      //console.log(status);
-      status.done = false;
-      if(Object.keys(status.downloadingTorrents).length == 0) {
-        if(Object.keys(status.completeTorrents).length == 0) {
-          status.state = "Ready(t)"
-        } else {
-          status.state = "Complete(t)";
-          status.done = true;
-        }
-      } else {
-        status.state = "Downloading(t)";
-      }
-      setStatus(status)
-    });
-  });
+function DownloadStatus(props) {
   return (
     <div className="downloadStatusDiv">
-      {status.done && <button id="install" onClick={install}>Install(t)</button>}
-      {Object.keys(status.downloadingTorrents).map((torrentName) => {  
+      {Object.keys(props.downloadingTorrents).map((torrentName) => {  
         return (  
-          <TorrentStatus name={torrentName} key={torrentName} torrent={status.downloadingTorrents[torrentName]} />
+          <TorrentStatus name={torrentName} key={torrentName} torrent={props.downloadingTorrents[torrentName]} />
         );  
       })}
-      {Object.keys(status.completeTorrents).map((torrentName) => {  
+      {Object.keys(props.completeTorrents).map((torrentName) => {  
         return (  
-          <TorrentStatus name={torrentName} key={torrentName} torrent={status.completeTorrents[torrentName]} />
+          <TorrentStatus name={torrentName} key={torrentName} torrent={props.completeTorrents[torrentName]} />
         );  
       })}
     </div>

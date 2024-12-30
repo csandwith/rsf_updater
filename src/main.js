@@ -96,15 +96,14 @@ ipcMain.handle("emptyDir", async(_, dirName) => {
   return res;
 });
 
-ipcMain.handle("moveDirContentsTo", async(_, srcName, destName) => {
+ipcMain.handle("copyDirContentsTo", async(_, srcName, destName) => {
   const srcPath = getTargetPath() + srcName;
   const destPath = getTargetPath() + destName;
-  const res = await fs.move(srcPath, destPath, { overwrite: true });
+  const res = await fs.copy(srcPath, destPath, { overwrite: true });
   return res;
 });
 
 const downloadStatus = {
-  state: "Ready",
   downloadingTorrents: {},
   completeTorrents: {}
 };
@@ -128,8 +127,6 @@ ipcMain.on("startDownload", (_, torrent, opts) => {
           length: torrent.length
         }
       }
-      
-      downloadStatus.state == Object.keys(downloadStatus.downloadingTorrents).length == 0 ? "Complete" : "Downloading";
     })
 
     torrent.on('done', () => {
@@ -143,7 +140,6 @@ ipcMain.on("startDownload", (_, torrent, opts) => {
       }
       delete downloadStatus.downloadingTorrents[torrent.name];
       downloadStatus.completeTorrents[torrent.name] = completeTorrent;
-      downloadStatus.state == Object.keys(downloadStatus.downloadingTorrents).length == 0 ? "Complete" : "Downloading";
     })
    console.log("Started torrent " + torrent.name);
   });
